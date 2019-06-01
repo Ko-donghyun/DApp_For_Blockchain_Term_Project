@@ -232,23 +232,33 @@ exports.get_request_list = (req, res) => {
 /** 데이터 요청 처리 */
 exports.get_encrypted_data = (req, res) => {
     console.log(`데이터 요청 처리 시작`);
-    const target_EOA = req.query.target_EOA;
+    const request_EOA = req.query.request_EOA;
 
-    // 1. 암호화 할 Public Key 획득
-    ppdl_helper_contract.methods.get_public_key(target_EOA).call().then((result) => {
-        console.log(`1. Public Key 조회 성공`);
-        const public_key = result;
-        console.log(public_key);
+    // 0. 요청한 EOA가 Client 서버를 운용하는 Access Control List에 등록되어 있는지 확인
+    if (white_account_list.indexOf(request_EOA) >= 0) {
+        console.log('0. 요청한 EOA 허가 확인');
 
-        // 2. 데이터 암호화
-        const text = 'Hello RSA!';
-        const buf = Buffer.from(text, 'utf8');
-        const encrypted = crypto.publicEncrypt(public_key, buf);
-        console.log(encrypted);
+        // 1. 암호화 할 Public Key 획득
+        ppdl_helper_contract.methods.get_public_key(request_EOA).call().then((result) => {
+            console.log(`1. Public Key 조회 성공`);
+            const public_key = result;
+            console.log(public_key);
 
-        // 3. 암호화된 데이터 응답
-        return res.json({status: 200, result: encrypted});
-    }).catch(err => {
-        console.log(err)
-    });
+            // 2. 데이터 암호화
+            const text = 'Hello RSA!';
+            const buf = Buffer.from(text, 'utf8');
+            const encrypted = crypto.publicEncrypt(public_key, buf);
+            console.log(encrypted);
+
+            // 3. 암호화된 데이터 응답
+            return res.json({status: 200, result: encrypted});
+        }).catch(err => {
+            console.log(err)
+        });
+    } else {
+        console.log(`0. 요청한 EOA 허가 거부 ${request_EOA}`);
+        return res.json({
+            "status": 500,
+        });
+    }
 };
