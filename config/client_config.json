@@ -1,0 +1,7 @@
+{
+  "_comment": "각 EOA의 개인키 보관 경로",
+  "_example": "A 유저 입장에서 학습을 진행한다고 가정",
+  "private_key_path": "./private_keys/private.pem",
+  "EOA": "0x3df5be52ad429d6606c528af722a9cc7c0278f7e",
+  "passphrase": "pass1"
+}
