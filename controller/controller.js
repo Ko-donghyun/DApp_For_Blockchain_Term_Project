@@ -185,3 +185,28 @@ exports.get_public_key = (req, res) => {
         return res.json({status: 200, result: result});
     });
 };
+
+
+/** 데이터 요청 처리 */
+exports.get_encrypted_data = (req, res) => {
+    console.log(`데이터 요청 처리 시작`);
+    const target_EOA = req.query.target_EOA;
+
+    // 1. 암호화 할 Public Key 획득
+    ppdl_helper_contract.methods.get_public_key(target_EOA).call().then((result) => {
+        console.log(`1. Public Key 조회 성공`);
+        const public_key = result;
+        console.log(public_key);
+
+        // 2. 데이터 암호화
+        const text = 'Hello RSA!';
+        const buf = Buffer.from(text, 'utf8');
+        const encrypted = crypto.publicEncrypt(public_key, buf);
+        console.log(encrypted);
+
+        // 3. 암호화된 데이터 응답
+        return res.json({status: 200, result: encrypted});
+    }).catch(err => {
+        console.log(err)
+    });
+};
