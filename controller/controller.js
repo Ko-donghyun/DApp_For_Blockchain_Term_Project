@@ -10,6 +10,8 @@ const acl = require('../config/access_control_list');
 const white_account_list = acl.accounts;
 const client_config = require('../config/client_config');
 const client_private_key_path = client_config.private_key_path;
+const client_user_EOA = client_config.EOA;
+const client_user_PP = client_config.passphrase;
 
 const web3 = new Web3(
     new Web3.providers.HttpProvider("http://localhost:8545")
@@ -270,23 +272,33 @@ exports.handle_learning_result = (req, res) => {
     console.log(`학습 결과 처리 시작`);
     const encrypted_result = req.body.encrypted_result;
     const blacklist_exist = req.body.blacklist_exist;
-    const blacklist_EOAs = req.body.blacklist_EOAs;
+    const blacklist_EOA = req.body.blacklist_EOA;
     const encrypted_result_buf = Buffer.from(JSON.parse(encrypted_result).data);
 
     // 1. 결과 복호화
-    // 2. 블랙리스트 등록
     fs.readFile(client_private_key_path, 'utf8', function(err, data) {
         console.log(`결과 복호화 시작`);
         const decrypted_result = crypto.privateDecrypt(data, encrypted_result_buf);
+        console.log(blacklist_exist);
         console.log(decrypted_result);
         console.log(decrypted_result.toString());
 
-        if (blacklist_exist === true) {
+        if (blacklist_exist === "true") {
+            web3.eth.personal.unlockAccount(client_user_EOA, client_user_PP, 600).then(() => {
+                console.log(`계정 unlock 성공 [account: ${client_user_EOA}].`);
 
-            console.log(`학습 결과 처리 및 블랙리스트 등록 완료`);
-            return res.json({status: 200, result: decrypted_result.toString()});
+                // 2. Black List 등록
+                ppdl_helper_contract.methods.register_blacklist(blacklist_EOA).send({from: client_user_EOA, gasLimit: 3000000}, (err, result) => {
+                    if (err) {
+                        console.log(`학습 결과 처리 성공, 블랙리스트 등록 실패`);
+                        return res.json({status: 201, result: decrypted_result.toString()});
+                    } else {
+                        console.log(`학습 결과 처리 및 블랙리스트 등록 완료`);
+                        return res.json({status: 200, TransactionID: result, result: decrypted_result.toString()});
+                    }
+                });
+            });
         } else {
-
             console.log(`학습 결과 처리 완료`);
             return res.json({status: 200, result: decrypted_result.toString()});
         }
