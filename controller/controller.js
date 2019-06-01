@@ -11,7 +11,7 @@ exports.generate_private_key = (req, res) => {
 
     // 2. Private Key 리턴
     console.log(`Private Key 생성 완료`);
-    return res.json({key: private_key});
+    return res.json({status: 200, key: private_key});
 };
 
 /** Public Key 배포 */
