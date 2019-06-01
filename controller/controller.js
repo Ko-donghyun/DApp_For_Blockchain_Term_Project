@@ -6,6 +6,8 @@ const tx = require('ethereumjs-tx');
 const crypto = require('crypto');
 // const lightwallet = require('eth-lightwallet');
 // const txutils = lightwallet.txutils;
+const acl = require('./../access_control_list/acl');
+const white_account_list = acl.accounts;
 
 const web3 = new Web3(
     new Web3.providers.HttpProvider("http://localhost:8545")

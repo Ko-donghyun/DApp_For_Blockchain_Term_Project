@@ -1,4 +1,5 @@
 {
     "_comment": "데이터 요청 허가 리스트",
-    " accounts": ["0xa4aaf64b7492a0b4c49d8e6f2ffbcc0d716eba50", "0x9417fbb8e5d308c4f42a682e0ee9db6cc5b46e05"]
+    "_example": "B 유저 입장에서 A와 C는 승인, D는 거부",
+    "accounts": ["0x3df5be52ad429d6606c528af722a9cc7c0278f7e", "0x9417fbb8e5d308c4f42a682e0ee9db6cc5b46e05"]
 }
