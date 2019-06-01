@@ -158,7 +158,7 @@ exports.deploy_public_key = (req, res) => {
             console.log(`계정 unlock 성공 [account: ${user_EOA}].`);
 
             // 2. Public Key 배포
-            ppdl_helper_contract.methods.deploy_public_key(public_key.replace(/\r?\n|\r/g, "")).send({from: user_EOA, gasLimit: 3000000}, (err, result) => {
+            ppdl_helper_contract.methods.deploy_public_key(public_key).send({from: user_EOA, gasLimit: 3000000}, (err, result) => {
                 if (err) {
                     console.log(`Public Key 배포 실패`);
                     return res.json({
