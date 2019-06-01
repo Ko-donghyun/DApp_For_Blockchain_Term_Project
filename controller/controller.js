@@ -152,7 +152,7 @@ exports.deploy_public_key = (req, res) => {
     fs.readFile(private_key_path, 'utf8', function(err, data) {
         // 1. Public Key 생성
         const key = new NodeRSA(data);
-        const public_key = key.exportKey(['public']);
+        const public_key = key.exportKey('pkcs1-public-pem');
 
         web3.eth.personal.unlockAccount(user_EOA, pass_phrase, 600).then(() => {
             console.log(`계정 unlock 성공 [account: ${user_EOA}].`);
