@@ -215,6 +215,18 @@ exports.register_request_list = (req, res) => {
 };
 
 
+/** Request List 획득 */
+exports.get_request_list = (req, res) => {
+    console.log(`Request List 조회 시작`);
+    const target_EOA = req.query.target_EOA;
+    console.log(target_EOA);
+
+    ppdl_helper_contract.methods.get_request_list(target_EOA).call().then((result) => {
+        console.log(`Request List 조회 성공`);
+        return res.json({status: 200, result: result});
+    });
+};
+
 /** 데이터 요청 처리 */
 exports.get_encrypted_data = (req, res) => {
     console.log(`데이터 요청 처리 시작`);
