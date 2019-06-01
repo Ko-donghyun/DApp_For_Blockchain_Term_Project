@@ -4,6 +4,7 @@ contract PPDL_HELPER {
     // This creates an array with all balances
     mapping (address => string) public_key;
     mapping (address => address[]) request_list;
+    mapping (address => mapping (address => uint)) blacklist;
 
     // # Public Key
     function deploy_public_key(string memory _value) public {
@@ -19,5 +20,16 @@ contract PPDL_HELPER {
     }
     function get_request_list(address _target) view public returns (address[] memory) {
         return request_list[_target];
+    }
+
+    // # Blacklist
+    function register_blacklist(address _to) public {
+        blacklist[msg.sender][_to] = 1;
+    }
+    function get_blacklist(address _target) view public returns (uint) {
+        return blacklist[msg.sender][_target];
+    }
+    function unregister_blacklist(address _to) public {
+        blacklist[msg.sender][_to] = 0;
     }
 }
