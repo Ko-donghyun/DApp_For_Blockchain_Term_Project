@@ -7,12 +7,15 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-// Private Key 생성
+// Private Key 생성 (유저)
 router.get('/generate_key',  controller.generate_private_key);
-// Public Key 배포
+// Public Key 배포 (유저)
 router.post('/deploy_key',  controller.deploy_public_key);
 // Public Key 획득
-router.get('/deploy_key',  controller.get_public_key);
+router.get('/get_key',  controller.get_public_key);
+
+// Request List 배포 (유저)
+router.post('/register_request_list',  controller.register_request_list);
 
 // 데이터 요청 처리
 router.get('/get_encrypted_data',  controller.get_encrypted_data);

@@ -187,6 +187,34 @@ exports.get_public_key = (req, res) => {
 };
 
 
+/** Request List 배포 */
+exports.register_request_list = (req, res) => {
+    console.log(`Request List 배포 시작`);
+    const user_EOA = req.body.user_EOA;
+    const pass_phrase = req.body.pass_phrase;
+    const target_EOAs = req.body.target_EOAs;
+    const target_EOAs_array = target_EOAs.split(',');
+    console.log(target_EOAs_array);
+
+    web3.eth.personal.unlockAccount(user_EOA, pass_phrase, 600).then(() => {
+        console.log(`계정 unlock 성공 [account: ${user_EOA}].`);
+
+        // 1. Request List 배포
+        ppdl_helper_contract.methods.register_request_list(target_EOAs_array).send({from: user_EOA, gasLimit: 3000000}, (err, result) => {
+            if (err) {
+                console.log(`Request List 배포 실패`);
+                return res.json({
+                    "status": 500,
+                });
+            } else {
+                console.log(`Request List 배포 완료`);
+                return res.json({status: 200, result: result});
+            }
+        });
+    });
+};
+
+
 /** 데이터 요청 처리 */
 exports.get_encrypted_data = (req, res) => {
     console.log(`데이터 요청 처리 시작`);
