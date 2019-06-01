@@ -14,4 +14,7 @@ router.post('/deploy_key',  controller.deploy_public_key);
 // Public Key 획득
 router.get('/deploy_key',  controller.get_public_key);
 
+// 데이터 요청 처리
+router.get('/get_encrypted_data',  controller.get_encrypted_data);
+
 module.exports = router;

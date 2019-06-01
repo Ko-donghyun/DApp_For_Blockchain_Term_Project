@@ -3,6 +3,7 @@ const fs = require('fs');
 const Web3 = require('web3');
 const util = require('ethereumjs-util');
 const tx = require('ethereumjs-tx');
+const crypto = require('crypto');
 // const lightwallet = require('eth-lightwallet');
 // const txutils = lightwallet.txutils;
 
@@ -133,7 +134,7 @@ exports.generate_private_key = (req, res) => {
     console.log(`Private Key 생성 시작`);
 
     // 1. Private Key 생성
-    const key = new NodeRSA({b: 256});
+    const key = new NodeRSA({b: 512});
     const private_key = key.exportKey(['private']);
 
     // 2. Private Key 리턴
@@ -151,13 +152,13 @@ exports.deploy_public_key = (req, res) => {
     fs.readFile(private_key_path, 'utf8', function(err, data) {
         // 1. Public Key 생성
         const key = new NodeRSA(data);
-        const public_key = key.exportKey(['public']);
+        const public_key = key.exportKey('pkcs1-public-pem');
 
         web3.eth.personal.unlockAccount(user_EOA, pass_phrase, 600).then(() => {
             console.log(`계정 unlock 성공 [account: ${user_EOA}].`);
 
             // 2. Public Key 배포
-            ppdl_helper_contract.methods.deploy_public_key(public_key.replace(/\r?\n|\r/g, "")).send({from: user_EOA, gasLimit: 3000000}, (err, result) => {
+            ppdl_helper_contract.methods.deploy_public_key(public_key).send({from: user_EOA, gasLimit: 3000000}, (err, result) => {
                 if (err) {
                     console.log(`Public Key 배포 실패`);
                     return res.json({
@@ -182,5 +183,30 @@ exports.get_public_key = (req, res) => {
     ppdl_helper_contract.methods.get_public_key(target_EOA).call().then((result) => {
         console.log(`Public Key 조회 성공`);
         return res.json({status: 200, result: result});
+    });
+};
+
+
+/** 데이터 요청 처리 */
+exports.get_encrypted_data = (req, res) => {
+    console.log(`데이터 요청 처리 시작`);
+    const target_EOA = req.query.target_EOA;
+
+    // 1. 암호화 할 Public Key 획득
+    ppdl_helper_contract.methods.get_public_key(target_EOA).call().then((result) => {
+        console.log(`1. Public Key 조회 성공`);
+        const public_key = result;
+        console.log(public_key);
+
+        // 2. 데이터 암호화
+        const text = 'Hello RSA!';
+        const buf = Buffer.from(text, 'utf8');
+        const encrypted = crypto.publicEncrypt(public_key, buf);
+        console.log(encrypted);
+
+        // 3. 암호화된 데이터 응답
+        return res.json({status: 200, result: encrypted});
+    }).catch(err => {
+        console.log(err)
     });
 };
