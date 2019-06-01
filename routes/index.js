@@ -21,5 +21,7 @@ router.get('/get_request_list',  controller.get_request_list);
 
 // 데이터 요청 처리 (클라우드 서버)
 router.get('/get_encrypted_data',  controller.get_encrypted_data);
+// 학습 결과 처리 (클라우드 서버)
+router.post('/learning_result',  controller.handle_learning_result);
 
 module.exports = router;

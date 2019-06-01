@@ -264,3 +264,33 @@ exports.get_encrypted_data = (req, res) => {
         });
     }
 };
+
+/** 학습 결과 처리 */
+exports.handle_learning_result = (req, res) => {
+    console.log(`학습 결과 처리 시작`);
+    const encrypted_result = req.body.encrypted_result;
+    const blacklist_exist = req.body.blacklist_exist;
+    const blacklist_EOAs = req.body.blacklist_EOAs;
+    const encrypted_result_buf = Buffer.from(JSON.parse(encrypted_result).data);
+
+    // 1. 결과 복호화
+    // 2. 블랙리스트 등록
+    fs.readFile(client_private_key_path, 'utf8', function(err, data) {
+        console.log(`결과 복호화 시작`);
+        const decrypted_result = crypto.privateDecrypt(data, encrypted_result_buf);
+        console.log(decrypted_result);
+        console.log(decrypted_result.toString());
+
+        if (blacklist_exist === true) {
+
+            console.log(`학습 결과 처리 및 블랙리스트 등록 완료`);
+            return res.json({status: 200, result: decrypted_result.toString()});
+        } else {
+
+            console.log(`학습 결과 처리 완료`);
+            return res.json({status: 200, result: decrypted_result.toString()});
+        }
+    });
+};
+
+
