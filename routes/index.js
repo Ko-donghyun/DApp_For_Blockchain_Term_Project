@@ -10,6 +10,8 @@ router.get('/', function(req, res, next) {
 // Private Key 생성
 router.get('/generate_key',  controller.generate_private_key);
 // Public Key 배포
-router.get('/deploy_key',  controller.deploy_public_key);
+router.post('/deploy_key',  controller.deploy_public_key);
+// Public Key 획득
+router.get('/deploy_key',  controller.get_public_key);
 
 module.exports = router;
