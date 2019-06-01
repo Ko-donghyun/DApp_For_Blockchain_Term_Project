@@ -3,6 +3,7 @@ const fs = require('fs');
 const Web3 = require('web3');
 const util = require('ethereumjs-util');
 const tx = require('ethereumjs-tx');
+const crypto = require('crypto');
 // const lightwallet = require('eth-lightwallet');
 // const txutils = lightwallet.txutils;
 
