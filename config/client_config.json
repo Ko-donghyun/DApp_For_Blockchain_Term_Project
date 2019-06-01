@@ -1,0 +1,4 @@
+{
+  "_comment": "각 EOA의 개인키 보관 경로",
+  "private_key_path": "./private_keys/private.pem"
+}
