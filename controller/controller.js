@@ -147,21 +147,17 @@ exports.deploy_public_key = (req, res) => {
     const user_EOA = req.body.user_EOA;
     const pass_phrase = req.body.pass_phrase;
     const private_key_path = req.body.private_key_path;
-    console.log(user_EOA)
-    console.log(pass_phrase)
-    console.log(private_key_path)
 
     fs.readFile(private_key_path, 'utf8', function(err, data) {
         // 1. Public Key 생성
         const key = new NodeRSA(data);
         const public_key = key.exportKey(['public']);
-        const aa = "" + public_key.replace(/\r?\n|\r/g, "") + "";
 
         web3.eth.personal.unlockAccount(user_EOA, pass_phrase, 600).then(() => {
             console.log(`계정 unlock 성공 [account: ${user_EOA}].`);
 
             // 2. Public Key 배포
-            ppdl_helper_contract.methods.deploy_public_key(aa).send({from: user_EOA}, (err, result) => {
+            ppdl_helper_contract.methods.deploy_public_key(public_key.replace(/\r?\n|\r/g, "")).send({from: user_EOA, gasLimit: 3000000}, (err, result) => {
                 if (err) {
                     console.log(`Public Key 배포 실패`);
                     return res.json({
