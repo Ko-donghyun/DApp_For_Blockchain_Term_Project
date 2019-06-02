@@ -17,7 +17,7 @@ const web3 = new Web3(
     new Web3.providers.HttpProvider("http://localhost:8545")
 );
 
-const contract_address = '0x7d64ffa7113a378a78454e03d9a233067c6f0874';
+const contract_address = '0xa84938d75c48dc53c8711f1419cbb92832bf1dce';
 const contract_interface = [
     {
         "constant": false,
@@ -257,7 +257,8 @@ exports.get_encrypted_data = (req, res) => {
             // 3. 암호화된 데이터 응답
             return res.json({status: 200, result: encrypted});
         }).catch(err => {
-            console.log(err)
+            console.log(err);
+            return res.json({status: 500});
         });
     } else {
         console.log(`0. 요청한 EOA 허가 거부 ${request_EOA}`);
